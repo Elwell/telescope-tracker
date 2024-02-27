@@ -12,6 +12,7 @@ import json
 
 
 url = 'http://ra-state.phys.utas.edu.au/cgi-bin/mt_pleasant_26_xml.pl'
+#url = 'http://ra-state.phys.utas.edu.au/cgi-bin/ceduna_30_xml.pl'
 
 response = requests.get(url)
 
