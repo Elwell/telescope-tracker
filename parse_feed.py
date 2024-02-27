@@ -18,7 +18,7 @@ url = 'http://ra-state.phys.utas.edu.au/cgi-bin/mt_pleasant_26_xml.pl'
 
 topic_base = 'telescope-parser'
 
-home_assistant = False ## WIP
+home_assistant = True
 
 
 print(f'Started Parser, scraping {url}\nPublishing to topic base {topic_base}')
@@ -77,21 +77,24 @@ def gen_atnf(stash):
     atnf['configuration'] = {'receiver': stash['focus']['receiver']}
     return(atnf)
     
-def register_ha(client, topic_base):
+def register_ha(mqttc, topic_base):
     """Send Discovery info for Home Assistant.
 
     Documentation: https://www.home-assistant.io/integrations/mqtt/#configuration-via-mqtt-discovery
     """
     print('Home Assistant integration enabled')
     unique_id = 'scopetracker'
-    config_base = f'discovery/binary_sensor/{unique_id}/config'
-    disc_payload = { 'origin': {'name': 'Telescope Tracker', 'sw': '0.1.0', 'url': 'https://github.com/Elwell/telescope-tracker'},
-                     'state_topic': '{topic_base}/json', 'name': 'Antenna State', 'json_attributes_topic': f'{topic_base}/json',
+    j_base = f'{topic_base}/hobart_26m/json'
+    config_base = f'homeassistant/sensor/{unique_id}'
+    payload_comm = { 'device': {'ids': [ unique_id ]}, 'state_topic': j_base, 
+                     'availability_topic': f'{topic_base}/status' }
+    # yes I repeat some of that on first pass as dict merge is lossy
+    payload_antstate = { 'device': {'name': 'Telescope Tracker', 'sw_version': '0.1.1', 'ids': [ unique_id ]},
+                     'name': 'Antenna State', 'unique_id': f'{unique_id}_antstate', 'icon': 'mdi:satellite-uplink',
                      'value_template': '{{ value_json.antenna.antenna_state }}'
                    }
-
-
-    client.publish(config_base, json.dumps(disc_payload))
+    mqttc.publish(f'{config_base}_antstate/config', json.dumps(payload_comm | payload_antstate))
+    # need to use 'entity_category' : 'config;' https://developers.home-assistant.io/blog/2021/10/26/config-entity/
 
 
 mqttc = mqtt.Client()
@@ -108,7 +111,7 @@ while True:
     status = parse_url(url)
     mqttc.publish(f'{topic_base}/hobart_26m/json', json.dumps(status))
     mqttc.publish(f'{topic_base}/atnf_json', json.dumps(gen_atnf(status)))
-    time.sleep(3)
+    time.sleep(6)
 mqttc.loop_stop()
 
 
