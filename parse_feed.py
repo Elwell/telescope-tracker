@@ -95,9 +95,9 @@ def register_ha(mqttc, topic_base):
                    }
     mqttc.publish(f'{config_base}_antstate/config', json.dumps(payload_comm | payload_antstate))
     # need to use 'entity_category' : 'config;' https://developers.home-assistant.io/blog/2021/10/26/config-entity/
-    payload_X = { 'name': 'X Pos', 'unique_id': f'{unique_id}_X', 'value_template': '{{ value_json.coord.x }}' }
+    payload_X = { 'name': 'X Pos', 'unique_id': f'{unique_id}_X', 'value_template': '{{ value_json.coord.x }}', 'unit_of_measurement': '°' }
     mqttc.publish(f'{config_base}_coord_x/config', json.dumps(payload_comm | payload_X))
-    payload_Y = { 'name': 'Y Pos', 'unique_id': f'{unique_id}_Y', 'value_template': '{{ value_json.coord.y }}' }
+    payload_Y = { 'name': 'Y Pos', 'unique_id': f'{unique_id}_Y', 'value_template': '{{ value_json.coord.y }}', 'unit_of_measurement': '°' }
     mqttc.publish(f'{config_base}_coord_y/config', json.dumps(payload_comm | payload_Y))
     
     #payload_X = { 'name': 'X Pos', 'unique_id': f'{unique_id}_X', 'value_template': '{{ value_json.drives }}' }
