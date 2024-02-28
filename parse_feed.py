@@ -122,6 +122,10 @@ if home_assistant:
 
 while True:
     status = parse_url(url)
+    if status is None:
+        print("Failed to get parsed XML. Retrying in 15s")
+        time.sleep(15)
+        continue
     mqttc.publish(f'{topic_base}/hobart_26m/json', json.dumps(status))
     mqttc.publish(f'{topic_base}/atnf_json', json.dumps(gen_atnf(status)))
     time.sleep(6)
