@@ -86,6 +86,7 @@ def register_ha(mqttc, topic_base):
     unique_id = 'scopetracker'
     j_base = f'{topic_base}/hobart_26m/json'
     config_base = f'homeassistant/sensor/{unique_id}'
+    bconfig_base = f'homeassistant/binary_sensor/{unique_id}'
     payload_comm = { 'device': {'ids': [ unique_id ]}, 'state_topic': j_base, 
                      'availability_topic': f'{topic_base}/status' }
     # yes I repeat some of that on first pass as dict merge is lossy
@@ -99,6 +100,11 @@ def register_ha(mqttc, topic_base):
     mqttc.publish(f'{config_base}_coord_x/config', json.dumps(payload_comm | payload_X))
     payload_Y = { 'name': 'Y Pos', 'unique_id': f'{unique_id}_Y', 'value_template': '{{ value_json.coord.y }}', 'unit_of_measurement': '°' }
     mqttc.publish(f'{config_base}_coord_y/config', json.dumps(payload_comm | payload_Y))
+    payload_power = { 'name': 'Power', 'unique_id': f'{unique_id}_power', 'value_template': '{{ value_json.drives.power [6:] }}', 'device_class': 'power' }
+    mqttc.publish(f'{bconfig_base}_power/config', json.dumps(payload_comm | payload_power))
+    payload_wind_state = { 'name': 'Wind Alarm', 'unique_id': f'{unique_id}_wind_state', 'value_template': '{{ value_json.weather.wind_state }}',
+                           'device_class': 'problem', 'payload_off': 'WIND_OK' }
+    mqttc.publish(f'{bconfig_base}_wind_state/config', json.dumps(payload_comm | payload_wind_state))
     
     #payload_X = { 'name': 'X Pos', 'unique_id': f'{unique_id}_X', 'value_template': '{{ value_json.drives }}' }
     #mqttc.publish(f'{config_base}_coord_x/config', json.dumps(payload_comm | payload_antstate))
