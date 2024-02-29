@@ -103,7 +103,7 @@ def register_ha(mqttc, topic_base):
     payload_power = { 'name': 'Power', 'unique_id': f'{unique_id}_power', 'value_template': '{{ value_json.drives.power [6:] }}', 'device_class': 'power' }
     mqttc.publish(f'{bconfig_base}_power/config', json.dumps(payload_comm | payload_power))
     payload_wind_state = { 'name': 'Wind Alarm', 'unique_id': f'{unique_id}_wind_state', 'value_template': '{{ value_json.weather.wind_state }}',
-                           'device_class': 'problem', 'payload_off': 'WIND_OK' }
+                           'device_class': 'problem', 'payload_off': 'WIND_OK', 'payload_on': 'WIND_BAD' }
     mqttc.publish(f'{bconfig_base}_wind_state/config', json.dumps(payload_comm | payload_wind_state))
     payload_windspeed = { 'name': 'Wind Speed', 'unique_id': f'{unique_id}_windspeed', 'value_template': '{{ value_json.weather.wind_speed_long }}', 'unit_of_measurement': 'km/h' }
     mqttc.publish(f'{config_base}_windspeed/config', json.dumps(payload_comm | payload_windspeed))
