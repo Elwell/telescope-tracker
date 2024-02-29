@@ -105,10 +105,14 @@ def register_ha(mqttc, topic_base):
     payload_wind_state = { 'name': 'Wind Alarm', 'unique_id': f'{unique_id}_wind_state', 'value_template': '{{ value_json.weather.wind_state }}',
                            'device_class': 'problem', 'payload_off': 'WIND_OK' }
     mqttc.publish(f'{bconfig_base}_wind_state/config', json.dumps(payload_comm | payload_wind_state))
-    
+    payload_windspeed = { 'name': 'Wind Speed', 'unique_id': f'{unique_id}_windspeed', 'value_template': '{{ value_json.weather.wind_speed_long }}', 'unit_of_measurement': 'km/h' }
+    mqttc.publish(f'{config_base}_windspeed/config', json.dumps(payload_comm | payload_windspeed))
+    payload_control = { 'name': 'Antenna Control', 'unique_id': f'{unique_id}_control', 'value_template': '{{ value_json.drives.antenna_control }}' }
+    mqttc.publish(f'{config_base}_control/config', json.dumps(payload_comm | payload_control))
+    payload_dmd_mode = { 'name': 'Drive Mode', 'unique_id': f'{unique_id}_dmd_mode', 'value_template': '{{ value_json.drives.dmd_mode }}' }
+    mqttc.publish(f'{config_base}_dmd_mode/config', json.dumps(payload_comm | payload_dmd_mode))
     #payload_X = { 'name': 'X Pos', 'unique_id': f'{unique_id}_X', 'value_template': '{{ value_json.drives }}' }
     #mqttc.publish(f'{config_base}_coord_x/config', json.dumps(payload_comm | payload_antstate))
-
 
 mqttc = mqtt.Client()
 mqttc.on_connect = on_connect
