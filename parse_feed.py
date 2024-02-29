@@ -111,6 +111,8 @@ def register_ha(mqttc, topic_base):
     mqttc.publish(f'{config_base}_control/config', json.dumps(payload_comm | payload_control))
     payload_dmd_mode = { 'name': 'Drive Mode', 'unique_id': f'{unique_id}_dmd_mode', 'value_template': '{{ value_json.drives.dmd_mode }}' }
     mqttc.publish(f'{config_base}_dmd_mode/config', json.dumps(payload_comm | payload_dmd_mode))
+    payload_receiver = { 'name': 'Receiver', 'unique_id': f'{unique_id}_receiver', 'value_template': '{{ value_json.focus.receiver }}' }
+    mqttc.publish(f'{config_base}_receiver/config', json.dumps(payload_comm | payload_receiver))
     #payload_X = { 'name': 'X Pos', 'unique_id': f'{unique_id}_X', 'value_template': '{{ value_json.drives }}' }
     #mqttc.publish(f'{config_base}_coord_x/config', json.dumps(payload_comm | payload_antstate))
 
